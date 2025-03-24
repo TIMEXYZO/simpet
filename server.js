@@ -1,6 +1,6 @@
 const express = require("express");
 const axios = require("axios");
-const formatResponse = require("./format.js"); // Import formatting function
+const formatResponse = require("./format.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,13 +17,18 @@ app.get("/", (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Gemini AI Text Generator</title>
+        <title>Subject-Based AI Query</title>
         <link rel="stylesheet" href="/style.css">
     </head>
     <body>
         <div class="container">
-            <h2>Gemini AI Text Generator</h2>
+            <h2>Ask AI a Subject-Specific Question</h2>
             <form id="aiForm">
+                <select id="subject">
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Maths">Maths</option>
+                </select>
                 <input type="text" id="userInput" placeholder="Enter your question..." required>
                 <button type="submit">Generate</button>
             </form>
@@ -39,18 +44,20 @@ app.get("/", (req, res) => {
 });
 
 app.post("/generate", async (req, res) => {
-  const userInput = req.body.userInput;
-  if (!userInput) {
-    return res.json({ response: "Error: No input provided." });
+  const { userInput, subject } = req.body;
+  if (!userInput || !subject) {
+    return res.json({ response: "Error: Missing input or subject selection." });
   }
+
+  const modifiedQuery = `Subject: ${subject}. ${userInput}`; // Append subject to query
 
   try {
     const response = await axios.post(GEMINI_URL, {
-      contents: [{ parts: [{ text: userInput }] }]
+      contents: [{ parts: [{ text: modifiedQuery }] }]
     });
 
     const generatedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
-    const formattedText = formatResponse(generatedText); // Apply formatting
+    const formattedText = formatResponse(generatedText);
 
     res.json({ response: formattedText });
   } catch (error) {
@@ -63,6 +70,7 @@ app.use("/script.js", (req, res) => {
     document.getElementById("aiForm").addEventListener("submit", async function(event) {
         event.preventDefault();
         const userInput = document.getElementById("userInput").value;
+        const subject = document.getElementById("subject").value;
         const responseText = document.getElementById("responseText");
 
         responseText.innerHTML = "Generating...";
@@ -71,7 +79,7 @@ app.use("/script.js", (req, res) => {
             const res = await fetch("/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userInput })
+                body: JSON.stringify({ userInput, subject })
             });
 
             const data = await res.json();
@@ -87,7 +95,7 @@ app.use("/style.css", (req, res) => {
   res.type("text/css").send(`
     body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; margin: 0; padding: 0; }
     .container { width: 50%; margin: 50px auto; padding: 20px; background: white; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
-    input { width: 70%; padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    select, input { width: 70%; padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; }
     button { padding: 10px 15px; background-color: #007BFF; color: white; border: none; cursor: pointer; border-radius: 5px; }
     button:hover { background-color: #0056b3; }
     .response-box { margin-top: 20px; padding: 10px; background: #eee; border-radius: 5px; text-align: left; }
