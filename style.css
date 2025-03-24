@@ -6,7 +6,7 @@ body {
     padding: 0;
 }
 .container {
-    width: 50%;
+    width: 70%;
     margin: 50px auto;
     padding: 20px;
     background: white;
@@ -45,13 +45,29 @@ b {
     font-weight: bold;
 }
 
-#chapterList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust column size */
-    gap: 10px;
-    padding: 10px;
-    text-align: left;
+#chapterTable {
+    border-collapse: collapse;
+    width: auto; /* Only takes necessary width */
 }
+
+#chapterTable td {
+    padding: 5px 10px;
+    border: none;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#chapterTable label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; /* Ensures checkbox is exactly after text */
+}
+
+
+
+
+
+
 
 #chapterList label {
     display: flex;
@@ -69,4 +85,3 @@ b {
     margin-right: 5px;
     vertical-align: middle;
 }
-
