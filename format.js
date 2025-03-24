@@ -4,7 +4,6 @@ module.exports = function formatResponse(text) {
 
   for (let line of lines) {
     if (line.startsWith("**") && line.endsWith("**")) {
-      // Convert **bold** to bold text
       formattedText += `<p class="heading">${line.slice(2, -2)}</p>`;
     } else {
       let words = line.split(" ");
