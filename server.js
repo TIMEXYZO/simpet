@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 app.get("/generate", async (req, res) => {
   try {
     const response = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=YOUR_API_KEY",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAoYNb5MO70jFV3Rn2CVXT9Jps29q1fTg8",
       {
         contents: [{ parts: [{ text: "Explain how AI works" }] }]
       },
