@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Subject-Based Query</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Ask AI a Subject-Specific Question</h2>
+        <form id="aiForm">
+            <label>Select Subject:</label>
+            <select id="subject">
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Maths">Maths</option>
+            </select>
+            
+            <label>Select Chapters:</label>
+            <select id="chapters" multiple></select>
+            
+            <input type="text" id="userInput" placeholder="Enter your question..." required>
+            <button type="submit">Generate</button>
+        </form>
+        <div class="response-box">
+            <h3>Response:</h3>
+            <div id="responseText"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
