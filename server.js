@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const formatResponse = require("./format.js"); // Import formatting function
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -7,7 +8,7 @@ const API_KEY = "AIzaSyAoYNb5MO70jFV3Rn2CVXT9Jps29q1fTg8"; // Replace with your 
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // Enable JSON parsing
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send(`
@@ -16,15 +17,8 @@ app.get("/", (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>QuAI Text Generator</title>
-        <style>
-            body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; margin: 0; padding: 0; }
-            .container { width: 50%; margin: 50px auto; padding: 20px; background: white; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
-            input { width: 70%; padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; }
-            button { padding: 10px 15px; background-color: #007BFF; color: white; border: none; cursor: pointer; border-radius: 5px; }
-            button:hover { background-color: #0056b3; }
-            .response-box { margin-top: 20px; padding: 10px; background: #eee; border-radius: 5px; text-align: left; }
-        </style>
+        <title>Gemini AI Text Generator</title>
+        <link rel="stylesheet" href="/style.css">
     </head>
     <body>
         <div class="container">
@@ -38,46 +32,7 @@ app.get("/", (req, res) => {
                 <div id="responseText"></div>
             </div>
         </div>
-        <script>
-            document.getElementById("aiForm").addEventListener("submit", async function(event) {
-                event.preventDefault();
-                const userInput = document.getElementById("userInput").value;
-                const responseText = document.getElementById("responseText");
-
-                responseText.innerHTML = "Generating...";
-
-                try {
-                    const res = await fetch("/generate", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ userInput })
-                    });
-
-                    const data = await res.json();
-                    responseText.innerHTML = formatText(data.response);
-                } catch (error) {
-                    responseText.textContent = "Error fetching response.";
-                }
-            });
-
-                function formatText(text) {
-    let formattedText = text.split("\n").map((line) => {
-        // Handle bold formatting **text**
-        line = line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-
-        // Handle headings (# Heading)
-        if (line.startsWith("# ")) {
-            return `<h2>${line.substring(2)}</h2>`;
-        }
-
-        return line;
-    }).join("<br>"); // Convert \n to <br> safely
-
-    return formattedText;
-}
-
-
-        </script>
+        <script src="/script.js"></script>
     </body>
     </html>
   `);
@@ -95,10 +50,52 @@ app.post("/generate", async (req, res) => {
     });
 
     const generatedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
-    res.json({ response: generatedText });
+    const formattedText = formatResponse(generatedText); // Apply formatting
+
+    res.json({ response: formattedText });
   } catch (error) {
     res.json({ response: "Error generating text: " + error.message });
   }
+});
+
+app.use("/script.js", (req, res) => {
+  res.type("application/javascript").send(`
+    document.getElementById("aiForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const userInput = document.getElementById("userInput").value;
+        const responseText = document.getElementById("responseText");
+
+        responseText.innerHTML = "Generating...";
+
+        try {
+            const res = await fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userInput })
+            });
+
+            const data = await res.json();
+            responseText.innerHTML = data.response;
+        } catch (error) {
+            responseText.innerHTML = "Error fetching response.";
+        }
+    });
+  `);
+});
+
+app.use("/style.css", (req, res) => {
+  res.type("text/css").send(`
+    body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; margin: 0; padding: 0; }
+    .container { width: 50%; margin: 50px auto; padding: 20px; background: white; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
+    input { width: 70%; padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 15px; background-color: #007BFF; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background-color: #0056b3; }
+    .response-box { margin-top: 20px; padding: 10px; background: #eee; border-radius: 5px; text-align: left; }
+    .response-box h3 { color: #333; }
+    .response-box p { margin: 5px 0; }
+    .bold { font-weight: bold; }
+    .heading { font-size: 20px; font-weight: bold; margin-top: 10px; }
+  `);
 });
 
 app.listen(PORT, () => {
