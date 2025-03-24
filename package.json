@@ -1,9 +1,9 @@
 {
   "name": "render-node-app",
   "version": "1.0.0",
-  "main": "gemini.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node gemini.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
