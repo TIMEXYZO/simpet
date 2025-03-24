@@ -11,14 +11,37 @@
         <h2>Ask AI a Subject-Specific Question</h2>
         <form id="aiForm">
             <label>Select Subject:</label>
-            <select id="subject">
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Maths">Maths</option>
+            <select id="subjectSelect">
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="maths" selected>Maths</option>
             </select>
             
             <label>Select Chapters:</label>
-            <div id="chapterList"></div>
+            <table id="chapterTable">
+    <tr>
+        <td><label>Sets <input type="checkbox" value="Sets"></label></td>
+        <td><label>Linear Inequalities <input type="checkbox" value="Linear Inequalities"></label></td>
+    </tr>
+    <tr>
+        <td><label>Relations and Functions <input type="checkbox" value="Relations and Functions"></label></td>
+        <td><label>Permutations and Combinations <input type="checkbox" value="Permutations and Combinations"></label></td>
+    </tr>
+    <tr>
+        <td><label>Trigonometric Functions <input type="checkbox" value="Trigonometric Functions"></label></td>
+        <td><label>Binomial Theorem <input type="checkbox" value="Binomial Theorem"></label></td>
+    </tr>
+    <tr>
+        <td><label>Principle of Mathematical Induction <input type="checkbox" value="Principle of Mathematical Induction"></label></td>
+        <td><label>Sequences and Series <input type="checkbox" value="Sequences and Series"></label></td>
+    </tr>
+    <tr>
+        <td><label>Complex Numbers and Quadratic Equations <input type="checkbox" value="Complex Numbers and Quadratic Equations"></label></td>
+        <td><label>Straight Lines <input type="checkbox" value="Straight Lines"></label></td>
+    </tr>
+</table>
+
+
 
             <input type="text" id="userInput" placeholder="Enter your question..." required>
             <button type="submit">Generate</button>
@@ -28,6 +51,6 @@
             <div id="responseText"></div>
         </div>
     </div>
-    <script src="script.js"></script>
+      <script src="script.js"></script>
 </body>
 </html>
