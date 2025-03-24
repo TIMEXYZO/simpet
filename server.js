@@ -6,8 +6,8 @@ const PORT = process.env.PORT || 3000;
 const API_KEY = "AIzaSyAoYNb5MO70jFV3Rn2CVXT9Jps29q1fTg8"; // Replace with your actual API key
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
-// Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Enable JSON parsing
 
 app.get("/", (req, res) => {
   res.send(`
@@ -49,12 +49,12 @@ app.get("/", (req, res) => {
                 try {
                     const res = await fetch("/generate", {
                         method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: "userInput=" + encodeURIComponent(userInput)
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userInput })
                     });
 
-                    const data = await res.text();
-                    responseText.textContent = data;
+                    const data = await res.json();
+                    responseText.textContent = data.response;
                 } catch (error) {
                     responseText.textContent = "Error fetching response.";
                 }
@@ -66,22 +66,21 @@ app.get("/", (req, res) => {
 });
 
 app.post("/generate", async (req, res) => {
-  let body = "";
-  req.on("data", chunk => { body += chunk.toString(); });
-  req.on("end", async () => {
-    const userInput = new URLSearchParams(body).get("userInput");
+  const userInput = req.body.userInput;
+  if (!userInput) {
+    return res.json({ response: "Error: No input provided." });
+  }
 
-    try {
-      const response = await axios.post(GEMINI_URL, {
-        contents: [{ parts: [{ text: userInput }] }]
-      });
+  try {
+    const response = await axios.post(GEMINI_URL, {
+      contents: [{ parts: [{ text: userInput }] }]
+    });
 
-      const generatedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
-      res.send(generatedText);
-    } catch (error) {
-      res.send("Error generating text: " + error.message);
-    }
-  });
+    const generatedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+    res.json({ response: generatedText });
+  } catch (error) {
+    res.json({ response: "Error generating text: " + error.message });
+  }
 });
 
 app.listen(PORT, () => {
