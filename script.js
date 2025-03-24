@@ -21,14 +21,24 @@ const chapters = {
 
 document.getElementById("subject").addEventListener("change", function() {
     const selectedSubject = this.value;
-    const chapterSelect = document.getElementById("chapters");
-    chapterSelect.innerHTML = "";
+    const chapterList = document.getElementById("chapterList");
+    chapterList.innerHTML = "";
 
     chapters[selectedSubject].forEach(chapter => {
-        const option = document.createElement("option");
-        option.value = chapter;
-        option.textContent = chapter;
-        chapterSelect.appendChild(option);
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = chapter;
+        checkbox.id = chapter;
+
+        const label = document.createElement("label");
+        label.htmlFor = chapter;
+        label.textContent = chapter;
+
+        const lineBreak = document.createElement("br");
+
+        chapterList.appendChild(checkbox);
+        chapterList.appendChild(label);
+        chapterList.appendChild(lineBreak);
     });
 });
 
@@ -36,7 +46,7 @@ document.getElementById("aiForm").addEventListener("submit", async function(even
     event.preventDefault();
     const userInput = document.getElementById("userInput").value;
     const subject = document.getElementById("subject").value;
-    const selectedChapters = Array.from(document.getElementById("chapters").selectedOptions).map(option => option.value);
+    const selectedChapters = Array.from(document.querySelectorAll("#chapterList input:checked")).map(cb => cb.value);
     const responseText = document.getElementById("responseText");
 
     if (selectedChapters.length === 0) {
@@ -60,4 +70,5 @@ document.getElementById("aiForm").addEventListener("submit", async function(even
     }
 });
 
+// Load chapters initially
 document.getElementById("subject").dispatchEvent(new Event("change"));
