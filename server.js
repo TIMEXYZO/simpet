@@ -60,12 +60,13 @@ app.get("/", (req, res) => {
                 }
             });
 
-            function formatText(text) {
-                return text
-                    .replace(/(?:\r\n|\r|\n)/g, "<br>")  // Convert \n to <br>
-                    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold text
-                    .replace(/^# (.*)$/gm, "<h2>$1</h2>"); // Headings
-            }
+                function formatText(text) {
+                    return text
+                        .replace(/(?:\r\n|\r|\n)/g, "<br>")  // Convert \n to <br>
+                        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") // Fix bold formatting
+                        .replace(/^# (.+)$/gm, "<h2>$1</h2>"); // Fix headings
+                }
+
         </script>
     </body>
     </html>
