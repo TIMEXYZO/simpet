@@ -20,9 +20,6 @@ select, input {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-select[multiple] {
-    height: 150px;
-}
 button {
     padding: 10px 15px;
     background-color: #007BFF;
@@ -40,4 +37,10 @@ button:hover {
     background: #eee;
     border-radius: 5px;
     text-align: left;
+}
+h2 {
+    color: #007BFF;
+}
+b {
+    font-weight: bold;
 }
