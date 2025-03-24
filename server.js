@@ -4,27 +4,24 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Home route to check if server is running
+const API_KEY = "AIzaSyAoYNb5MO70jFV3Rn2CVXT9Jps29q1fTg8"; // Replace with your actual API key
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });
 
-// Gemini API Route
 app.get("/generate", async (req, res) => {
   try {
-    const response = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAoYNb5MO70jFV3Rn2CVXT9Jps29q1fTg8",
-      {
-        contents: [{ parts: [{ text: "Explain how AI works" }] }]
-      },
-      {
-        headers: { "Content-Type": "application/json" }
-      }
-    );
+    const response = await axios.post(GEMINI_URL, {
+      contents: [{ parts: [{ text: "Explain benefits of playing piano" }] }]
+    });
 
-    res.json(response.data);
+    // Extract text response from Gemini API
+    const generatedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+    res.send(generatedText);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).send("Error generating text: " + error.message);
   }
 });
 
