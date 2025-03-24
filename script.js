@@ -53,7 +53,7 @@ document.getElementById("aiForm").addEventListener("submit", async function (eve
             event.preventDefault(); // **Fixes page refresh issue**
 
             let userInput = document.getElementById("userInput").value;
-            let subject = document.getElementById("subject").value;
+            let subject = document.getElementById("subjectSelect").value;
             let selectedChapters = Array.from(document.querySelectorAll("#chaptersTable input:checked")).map(cb => cb.value);
 
             if (!userInput.trim() || selectedChapters.length === 0) {
