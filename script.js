@@ -48,3 +48,27 @@ document.getElementById("Generate").addEventListener("click", function () {
         ? "Selected Chapters: " + selectedChapters.join(", ")  
         : "No chapters selected!";
 });
+
+document.getElementById("aiForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // **Fixes page refresh issue**
+
+            let userInput = document.getElementById("userInput").value;
+            let subject = document.getElementById("subject").value;
+            let selectedChapters = Array.from(document.querySelectorAll("#chaptersTable input:checked")).map(cb => cb.value);
+
+            if (!userInput.trim() || selectedChapters.length === 0) {
+                alert("Please enter a question and select at least one chapter.");
+                return;
+            }
+
+            let response = await fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userInput, subject, selectedChapters })
+            });
+
+            let result = await response.json();
+            document.getElementById("output").innerHTML = result.response;
+        });
+
+        updateChapters();
