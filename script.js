@@ -16,31 +16,35 @@ const chapters = {
     ]
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-    const subjectSelect = document.getElementById("subjectSelect");
+document.getElementById("subjectSelect").addEventListener("change", function () {
+    const subject = this.value;
     const chapterTable = document.getElementById("chapterTable");
+    chapterTable.innerHTML = ""; // Clear previous content
 
-    subjectSelect.addEventListener("change", function () {
-        const subject = this.value;
-        chapterTable.innerHTML = ""; // Clear previous content
+    if (!subject || !chapters[subject]) return;
 
-        if (!subject || !chapters[subject]) return;
+    let rows = "";
+    for (let i = 0; i < chapters[subject].length; i += 2) {
+        const col1 = chapters[subject][i] || "";
+        const col2 = chapters[subject][i + 1] || "";
+        rows += `
+            <tr>
+                <td><label>${col1} <input type="checkbox" value="${col1}"></label></td>
+                <td><label>${col2} <input type="checkbox" value="${col2}"></label></td>
+            </tr>
+        `;
+    }
 
-        let tableHTML = "<tr>";
-        chapters[subject].forEach((chapter, index) => {
-            tableHTML += `
-                <td><label>${chapter} <input type="checkbox" value="${chapter}"></label></td>
-            `;
-            if ((index + 1) % 2 === 0) {
-                tableHTML += "</tr><tr>"; // Start a new row every 2 chapters
-            }
-        });
-        tableHTML += "</tr>";
-
-        chapterTable.innerHTML = tableHTML;
-    });
+    chapterTable.innerHTML = rows;
 });
 
+document.getElementById("Generate").addEventListener("click", function () {
+    const selectedChapters = [];
+    document.querySelectorAll("#chapterTable input:checked").forEach(checkbox => {
+        selectedChapters.push(checkbox.value);
+    });
 
-// Load chapters initially
-document.getElementById("subject").dispatchEvent(new Event("change"));
+    document.getElementById("responseText").textContent = selectedChapters.length > 0 
+        ? "Selected Chapters: " + selectedChapters.join(", ")  
+        : "No chapters selected!";
+});
