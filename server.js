@@ -2,7 +2,6 @@ const express = require("express");
 const axios = require("axios");
 const formatResponse = require("./format.js");
 const chapters = require("./chapters.js");
-const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
