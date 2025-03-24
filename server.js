@@ -61,11 +61,21 @@ app.get("/", (req, res) => {
             });
 
                 function formatText(text) {
-                    return text
-                        .replace(/(?:\r\n|\r|\n)/g, "<br>")  // Convert \n to <br>
-                        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") // Fix bold formatting
-                        .replace(/^# (.+)$/gm, "<h2>$1</h2>"); // Fix headings
-                }
+    let formattedText = text.split("\n").map((line) => {
+        // Handle bold formatting **text**
+        line = line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+        // Handle headings (# Heading)
+        if (line.startsWith("# ")) {
+            return `<h2>${line.substring(2)}</h2>`;
+        }
+
+        return line;
+    }).join("<br>"); // Convert \n to <br> safely
+
+    return formattedText;
+}
+
 
         </script>
     </body>
